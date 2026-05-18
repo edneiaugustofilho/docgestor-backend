@@ -1,9 +1,6 @@
 package br.com.ednei.docgestorbackend.service;
 
-import br.com.ednei.docgestorbackend.dto.CreateLoteRequest;
-import br.com.ednei.docgestorbackend.dto.DocumentoResponse;
-import br.com.ednei.docgestorbackend.dto.LoteResponse;
-import br.com.ednei.docgestorbackend.dto.UpdateLoteStatusRequest;
+import br.com.ednei.docgestorbackend.dto.*;
 import br.com.ednei.docgestorbackend.entity.Documento;
 import br.com.ednei.docgestorbackend.entity.Lote;
 import br.com.ednei.docgestorbackend.enums.LoteStatus;
@@ -42,7 +39,7 @@ public class LoteService {
         return toResponse(loteRepository.save(lote));
     }
 
-    public Page<LoteResponse> listar(LoteStatus status, String operador, Pageable pageable) {
+    public PageResponse<LoteResponse> listar(LoteStatus status, String operador, Pageable pageable) {
         Page<Lote> lotes;
 
         if (status != null && operador != null && !operador.isBlank()) {
@@ -55,7 +52,15 @@ public class LoteService {
             lotes = loteRepository.findAll(pageable);
         }
 
-        return lotes.map(this::toResponse);
+        Page<LoteResponse> responsePage = lotes.map(this::toResponse);
+
+        return new PageResponse<>(
+                responsePage.getContent(),
+                responsePage.getTotalElements(),
+                responsePage.getTotalPages(),
+                responsePage.getNumber(),
+                responsePage.getSize()
+        );
     }
 
     public LoteResponse atualizarStatus(Long id, UpdateLoteStatusRequest request) {
