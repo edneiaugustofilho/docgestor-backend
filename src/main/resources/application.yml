@@ -1,0 +1,28 @@
+app:
+  company:
+    name: docgestor
+
+spring:
+  profiles:
+    active: dev
+    version: 1.0.0-alpha
+
+  application:
+    name: docgestor-backend
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/db_docgestor
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    database: POSTGRESQL
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+server:
+  port: 8180
