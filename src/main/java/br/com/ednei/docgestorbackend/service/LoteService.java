@@ -3,9 +3,12 @@ package br.com.ednei.docgestorbackend.service;
 import br.com.ednei.docgestorbackend.dto.CreateLoteRequest;
 import br.com.ednei.docgestorbackend.dto.DocumentoResponse;
 import br.com.ednei.docgestorbackend.dto.LoteResponse;
+import br.com.ednei.docgestorbackend.dto.UpdateLoteStatusRequest;
 import br.com.ednei.docgestorbackend.entity.Documento;
 import br.com.ednei.docgestorbackend.entity.Lote;
 import br.com.ednei.docgestorbackend.enums.LoteStatus;
+import br.com.ednei.docgestorbackend.exception.BusinessException;
+import br.com.ednei.docgestorbackend.exception.ResourceNotFoundException;
 import br.com.ednei.docgestorbackend.repository.LoteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -53,6 +56,19 @@ public class LoteService {
         }
 
         return lotes.map(this::toResponse);
+    }
+
+    public LoteResponse atualizarStatus(Long id, UpdateLoteStatusRequest request) {
+        Lote lote = loteRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Lote não encontrado"));
+
+        if (lote.getStatus() == LoteStatus.EXPORTADO) {
+            throw new BusinessException("Lote com status EXPORTADO não pode ser alterado");
+        }
+
+        lote.setStatus(request.status());
+
+        return toResponse(loteRepository.save(lote));
     }
 
     private LoteResponse toResponse(Lote lote) {
