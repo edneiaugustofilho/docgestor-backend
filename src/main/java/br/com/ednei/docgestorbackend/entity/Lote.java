@@ -39,6 +39,7 @@ public class Lote {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
+    @Builder.Default
     private List<Documento> documentos = new ArrayList<>();
 
 }
